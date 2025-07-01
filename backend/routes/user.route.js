@@ -132,5 +132,26 @@ userRouter.put('/' ,authMiddleware, async (req,res)=>{
     
 })
 
+userRouter.get("/bulk", async(req,res) => {
+    const filter = req.quesry.filter || "";
+
+    const users = await User.find({
+        $or:[{
+            fullName:{
+                "$regex": filter
+            }
+        }
+    ]
+    })
+
+    res.json({
+        user: users.map(user => ({
+            username:user.username,
+            fullName:user.fullName,
+            _id:user._id
+        }))
+    })
+})
+
 userRouter.get('/user/')
 module.exports = userRouter
